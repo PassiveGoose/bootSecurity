@@ -1,0 +1,83 @@
+package ru.kata.spring.boot_security.demo.controller;
+
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.service.UserService;
+import ru.kata.spring.boot_security.demo.util.UserValidator;
+
+@Controller
+public class UserController {
+    private static final String ERROR_MESSAGE = "something is wrong";
+
+    private final UserService userService;
+
+    private final UserValidator userValidator;
+
+    @Autowired
+    public UserController(UserService userService, UserValidator userValidator) {
+        this.userService = userService;
+        this.userValidator = userValidator;
+    }
+
+    @RequestMapping(value = {"/users"}, method = RequestMethod.GET)
+    public String printUsers(ModelMap model) {
+        model.addAttribute("users", userService.getAllUsers());
+        return "user_list";
+    }
+
+    @RequestMapping(value = { "/add_user" }, method = RequestMethod.GET)
+    public String showAddUserPage(ModelMap model) {
+        model.addAttribute("user", new User());
+        return "add_user";
+    }
+
+    @GetMapping("/user")
+    public String showUserPage(ModelMap model, @RequestParam("id") int id) {
+        model.addAttribute("user", userService.getUserById(id));
+        return "user";
+    }
+
+    @RequestMapping(value = { "/add_user" }, method = RequestMethod.POST)
+    public String addUser(ModelMap model,
+                          @ModelAttribute("user") @Valid User user,
+                          BindingResult bindingResult) {
+        userValidator.validate(user, bindingResult);
+        if (!bindingResult.hasErrors()) {
+            userService.saveUser(user);
+            return "redirect:/users";
+        }
+        model.addAttribute("errorMessage", ERROR_MESSAGE);
+        return "add_user";
+    }
+
+    @RequestMapping(value = {"/delete_user"}, params = "id", method = RequestMethod.POST)
+    public String deleteUser(@RequestParam int id) {
+        userService.removeUserById(id);
+        return "redirect:/users";
+    }
+
+    @RequestMapping(value = {"/edit_user"}, params = "id", method = RequestMethod.GET)
+    public String showEditUserPage(ModelMap model, @RequestParam int id) {
+        User user = userService.getUserById(id);
+        model.addAttribute("user", user);
+        model.addAttribute("userId", id);
+        return "edit_user";
+    }
+
+    @RequestMapping(value = {"/edit_user"}, params = "id", method = RequestMethod.POST)
+    public String editUser(ModelMap model,
+                           @ModelAttribute("user") @Valid User user,
+                           @RequestParam int id) {
+        userService.updateUserById(id, user);
+        return "redirect:/users";
+    }
+}
