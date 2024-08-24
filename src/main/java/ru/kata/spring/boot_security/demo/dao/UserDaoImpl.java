@@ -32,9 +32,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void updateUserById(int id, User user) {
-        entityManager.detach(user);
-        user.setId(id);
+    public void updateUser(User user) {
         entityManager.merge(user);
     }
 

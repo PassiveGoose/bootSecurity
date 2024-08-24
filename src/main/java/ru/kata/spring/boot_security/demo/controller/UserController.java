@@ -7,6 +7,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,7 +47,12 @@ public class UserController {
         return "user";
     }
 
-    @RequestMapping(value = { "/add_user" }, method = RequestMethod.POST)
+    @PostMapping(value = "/add_user", params = "action=cancel")
+    public String cancelAdding() {
+        return "redirect:/users";
+    }
+
+    @PostMapping(value = "/add_user", params = "action=create")
     public String addUser(ModelMap model,
                           @ModelAttribute("user") @Valid User user,
                           BindingResult bindingResult) {
@@ -59,7 +65,7 @@ public class UserController {
         return "add_user";
     }
 
-    @RequestMapping(value = {"/delete_user"}, params = "id", method = RequestMethod.POST)
+    @PostMapping(value = "/delete_user", params = "id")
     public String deleteUser(@RequestParam int id) {
         userService.removeUserById(id);
         return "redirect:/users";
@@ -73,11 +79,22 @@ public class UserController {
         return "edit_user";
     }
 
-    @RequestMapping(value = {"/edit_user"}, params = "id", method = RequestMethod.POST)
+    @PostMapping(value = "/edit_user", params = "action=cancel")
+    public String cancelEditUser() {
+        return "redirect:/users";
+    }
+
+    @PostMapping(value = "/edit_user", params = "action=update")
     public String editUser(ModelMap model,
                            @ModelAttribute("user") @Valid User user,
-                           @RequestParam int id) {
-        userService.updateUserById(id, user);
-        return "redirect:/users";
+                           BindingResult bindingResult) {
+        userValidator.validate(user, bindingResult);
+        if (!bindingResult.hasErrors()) {
+            System.out.println(user);
+            userService.updateUser(user);
+            return "redirect:/users";
+        }
+        model.addAttribute("errorMessage", ERROR_MESSAGE);
+        return "edit_user";
     }
 }

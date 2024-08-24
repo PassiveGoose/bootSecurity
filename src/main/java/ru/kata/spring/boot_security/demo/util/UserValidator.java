@@ -29,7 +29,7 @@ public class UserValidator implements Validator {
         User user = (User) target;
         Optional<User> userInDB = userService.getUserByUsername(user.getUsername());
 
-        if (userInDB.isPresent()) {
+        if (userInDB.isPresent() && userInDB.get().getId() != user.getId()) {
             errors.rejectValue("username", "", "Username is already in db");
         }
     }

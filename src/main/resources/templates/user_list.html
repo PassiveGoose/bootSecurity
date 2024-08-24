@@ -5,9 +5,13 @@
     <title>Users</title>
 </head>
 <body>
+
+<form th:action="logout" method="post">
+    <input type="submit" value="Logout" />
+</form>
+
 <div th:align="center">
     <h1>Users</h1>
-    <a th:href="add_user">Add User</a>
     <br/><br/>
     <div>
         <table th:border="1">
@@ -25,15 +29,21 @@
                 <td th:utext="${user.surname}">...</td>
                 <td th:utext="${user.age}">...</td>
                 <td>
-                    <a th:href="@{/edit_user(id=${user.id})}">Edit</a>
+                    <form th:action="@{/edit_user}" th:object="${user}" method="get">
+                        <button type="submit" name="id" th:value="*{id}" > Edit </button>
+                    </form>
                 </td>
                 <td>
-                    <form th:action="@{/delete_user(id=${user.id})}" method="post">
-                        <input type="submit" value="Delete" class="btn btn-danger" />
+                    <form th:action="@{/delete_user}" th:object="${user}" method="post">
+                        <button type="submit" name="id" th:value="*{id}" > Delete </button>
                     </form>
                 </td>
             </tr>
         </table>
+        <br/><br>
+        <form th:action="add_user" method="get">
+            <input type="submit" value="Add User">
+        </form>
     </div>
 </div>
 </body>

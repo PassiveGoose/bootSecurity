@@ -35,7 +35,12 @@ public class AuthController {
         return "auth/register";
     }
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register", params = "action=cancel")
+    public String cancelRegister() {
+        return "redirect:login";
+    }
+
+    @PostMapping(value = "/register", params = "action=create")
     public String register(@ModelAttribute("user") User user,
                            BindingResult bindingResult) {
         userValidator.validate(user, bindingResult);

@@ -17,7 +17,7 @@ public interface UserService {
     List<User> getAllUsers();
 
     @Transactional
-    void updateUserById(int id, User user);
+    void updateUser(User user);
 
     User getUserById(int id);
 
