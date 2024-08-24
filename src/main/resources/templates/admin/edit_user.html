@@ -2,18 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Add User</title>
+    <title>Edit User</title>
 </head>
 <body>
 
-<form th:action="logout" method="post">
+<form th:action="@{/logout}" method="post">
     <input type="submit" value="Logout" />
 </form>
 
 <div th:align="center">
-    <h1>Create a User:</h1>
+    <h1>Edit User:</h1>
 
-    <form th:action="@{/add_user}" th:object="${user}" method="POST">
+    <form th:action="@{/admin/edit_user}" th:object="${user}" method="POST">
+        <input type="hidden" th:field="*{id}" />
         <table>
             <tr>
                 <td>Name:</td>
@@ -58,15 +59,14 @@
                 </label></td>
             </tr>
         </table>
-        <button type="submit" name="action" value="create">Create</button>
+        <button type="submit" name="action" value="update">Update</button>
         <button type="submit" name="action" value="cancel">Cancel</button>
     </form>
 
     <br/>
 
-    <div th:if="${errorMessage}" th:utext="${errorMessage}"
-         style="color:red;font-style:italic;">
-        ...
+    <div th:if="${param.error}" style="color:red;font-style:italic;">
+        Данные пользователя не прошли валидацию
     </div>
 </div>
 

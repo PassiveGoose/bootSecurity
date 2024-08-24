@@ -24,7 +24,9 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthController(UserValidator userValidator, UserService userService, PasswordEncoder passwordEncoder) {
+    public AuthController(UserValidator userValidator,
+                          UserService userService,
+                          PasswordEncoder passwordEncoder) {
         this.userValidator = userValidator;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;

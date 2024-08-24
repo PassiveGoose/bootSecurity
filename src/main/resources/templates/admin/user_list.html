@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<form th:action="logout" method="post">
+<form th:action="@{/logout}" method="post">
     <input type="submit" value="Logout" />
 </form>
 
@@ -31,19 +31,19 @@
                 <td th:utext="${user.age}">...</td>
                 <td th:text="${user.roles}">...</td>
                 <td>
-                    <form th:action="@{/edit_user}" th:object="${user}" method="get">
+                    <form th:action="@{/admin/edit_user}" th:object="${user}" method="get">
                         <button type="submit" name="id" th:value="*{id}" > Edit </button>
                     </form>
                 </td>
                 <td>
-                    <form th:action="@{/delete_user}" th:object="${user}" method="post">
+                    <form th:action="@{/admin/delete_user}" th:object="${user}" method="post">
                         <button type="submit" name="id" th:value="*{id}" > Delete </button>
                     </form>
                 </td>
             </tr>
         </table>
         <br/><br>
-        <form th:action="add_user" method="get">
+        <form th:action="@{/admin/add_user}" method="get">
             <input type="submit" value="Add User">
         </form>
     </div>

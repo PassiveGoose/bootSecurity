@@ -1,7 +1,8 @@
 package ru.kata.spring.boot_security.demo.util;
 
+import org.springframework.lang.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Component;
 import ru.kata.spring.boot_security.demo.model.User;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -9,7 +10,7 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.Optional;
 
-@Controller
+@Component
 public class UserValidator implements Validator {
 
     private final UserService userService;
@@ -20,12 +21,12 @@ public class UserValidator implements Validator {
     }
 
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(@NonNull Class<?> clazz) {
         return User.class.isAssignableFrom(clazz);
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
         User user = (User) target;
         Optional<User> userInDB = userService.getUserByUsername(user.getUsername());
 
