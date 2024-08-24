@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -21,10 +22,13 @@ public class UserController {
 
     private final UserValidator userValidator;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserController(UserService userService, UserValidator userValidator) {
+    public UserController(UserService userService, UserValidator userValidator, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userValidator = userValidator;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/users")
@@ -56,6 +60,7 @@ public class UserController {
                           BindingResult bindingResult) {
         userValidator.validate(user, bindingResult);
         if (!bindingResult.hasErrors()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             userService.saveUser(user);
             return "redirect:/users";
         }
@@ -88,7 +93,7 @@ public class UserController {
                            BindingResult bindingResult) {
         userValidator.validate(user, bindingResult);
         if (!bindingResult.hasErrors()) {
-            System.out.println(user);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             userService.updateUser(user);
             return "redirect:/users";
         }

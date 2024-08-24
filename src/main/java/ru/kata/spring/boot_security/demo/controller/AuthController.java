@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +20,13 @@ public class AuthController {
 
     private final UserService userService;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public AuthController(UserValidator userValidator, UserService userService) {
+    public AuthController(UserValidator userValidator, UserService userService, PasswordEncoder passwordEncoder) {
         this.userValidator = userValidator;
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/login")
@@ -47,6 +51,7 @@ public class AuthController {
         if (bindingResult.hasErrors()) {
             return "redirect:register?error";
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.saveUser(user);
         return "redirect:login";
     }
