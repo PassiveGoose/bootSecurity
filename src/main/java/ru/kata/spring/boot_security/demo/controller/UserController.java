@@ -8,8 +8,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
@@ -29,13 +27,13 @@ public class UserController {
         this.userValidator = userValidator;
     }
 
-    @RequestMapping(value = {"/users"}, method = RequestMethod.GET)
+    @GetMapping("/users")
     public String printUsers(ModelMap model) {
         model.addAttribute("users", userService.getAllUsers());
         return "user_list";
     }
 
-    @RequestMapping(value = { "/add_user" }, method = RequestMethod.GET)
+    @GetMapping("/add_user")
     public String showAddUserPage(ModelMap model) {
         model.addAttribute("user", new User());
         return "add_user";
@@ -71,7 +69,7 @@ public class UserController {
         return "redirect:/users";
     }
 
-    @RequestMapping(value = {"/edit_user"}, params = "id", method = RequestMethod.GET)
+    @GetMapping(value = "/edit_user", params = "id")
     public String showEditUserPage(ModelMap model, @RequestParam int id) {
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
