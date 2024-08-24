@@ -1,14 +1,21 @@
 package ru.kata.spring.boot_security.demo.model;
 
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -38,16 +45,14 @@ public class User {
     @Size(min = 2, max = 100)
     private String password;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private List<Role> roles = new ArrayList<>();
+
     public User() {
         this.name = "defaultName";
         this.surname = "defaultSurname";
         this.age = 1;
-    }
-
-    public User(String name, String surname, int age) {
-        this.name = name;
-        this.surname = surname;
-        this.age = age;
     }
 
     public void setId(int id) {
@@ -96,6 +101,18 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     @Override

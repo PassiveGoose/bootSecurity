@@ -5,7 +5,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import ru.kata.spring.boot_security.demo.model.User;
 
 import java.util.Collection;
-import java.util.Collections;
 
 public class UserDetailsImpl implements UserDetails {
 
@@ -17,7 +16,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return user.getRoles();
     }
 
     @Override

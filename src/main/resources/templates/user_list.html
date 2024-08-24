@@ -20,6 +20,7 @@
                 <th>Name</th>
                 <th>Surname</th>
                 <th>Age</th>
+                <th>Roles</th>
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
@@ -28,6 +29,7 @@
                 <td th:utext="${user.name}">...</td>
                 <td th:utext="${user.surname}">...</td>
                 <td th:utext="${user.age}">...</td>
+                <td th:text="${user.roles}">...</td>
                 <td>
                     <form th:action="@{/edit_user}" th:object="${user}" method="get">
                         <button type="submit" name="id" th:value="*{id}" > Edit </button>

@@ -10,9 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 import ru.kata.spring.boot_security.demo.util.UserValidator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class UserController {
@@ -31,6 +35,12 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @GetMapping("/user")
+    public String showUserPage(ModelMap model, @RequestParam("id") int id) {
+        model.addAttribute("user", userService.getUserById(id));
+        return "user";
+    }
+
     @GetMapping("/users")
     public String printUsers(ModelMap model) {
         model.addAttribute("users", userService.getAllUsers());
@@ -39,14 +49,13 @@ public class UserController {
 
     @GetMapping("/add_user")
     public String showAddUserPage(ModelMap model) {
-        model.addAttribute("user", new User());
-        return "add_user";
-    }
+        List<Role> roles = new ArrayList<>();
+        roles.add(new Role());
+        roles.add(new Role("ADMIN"));
 
-    @GetMapping("/user")
-    public String showUserPage(ModelMap model, @RequestParam("id") int id) {
-        model.addAttribute("user", userService.getUserById(id));
-        return "user";
+        model.addAttribute("user", new User());
+        model.addAttribute("roles", roles);
+        return "add_user";
     }
 
     @PostMapping(value = "/add_user", params = "action=cancel")
@@ -76,9 +85,14 @@ public class UserController {
 
     @GetMapping(value = "/edit_user", params = "id")
     public String showEditUserPage(ModelMap model, @RequestParam int id) {
+        List<Role> roles = new ArrayList<>();
+        roles.add(new Role());
+        roles.add(new Role("ADMIN"));
+
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
         model.addAttribute("userId", id);
+        model.addAttribute("roles", roles);
         return "edit_user";
     }
 

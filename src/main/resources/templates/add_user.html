@@ -35,6 +35,7 @@
                     <input type="number" th:field="*{age}"/>
                 </label></td>
             </tr>
+
             <tr>
                 <td>Username:</td>
                 <td><label>
@@ -46,6 +47,14 @@
                 <td>Password:</td>
                 <td><label>
                     <input type="password" th:field="*{password}"/>
+                </label></td>
+            </tr>
+
+            <tr>
+                <td>Roles:</td>
+                <td><label th:each="role : ${roles}">
+                    <input type="checkbox" name="roles" th:field="${user.roles}" th:value="${role.name}"/>
+                    <label th:text="${role.name}" ></label>
                 </label></td>
             </tr>
         </table>
