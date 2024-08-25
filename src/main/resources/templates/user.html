@@ -5,6 +5,12 @@
     <title>User Page</title>
 </head>
 <body>
+
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Logout" />
+</form>
+
+
 <div th:align="center">
     <h1>User</h1>
     <br/><br/>
@@ -15,22 +21,14 @@
                 <th>Name</th>
                 <th>Surname</th>
                 <th>Age</th>
-                <th>Edit</th>
-                <th>Delete</th>
+                <th>Roles</th>
             </tr>
             <tr th:object="${user}">
                 <td th:utext="*{id}">...</td>
                 <td th:utext="*{name}">...</td>
                 <td th:utext="*{surname}">...</td>
                 <td th:utext="*{age}">...</td>
-                <td>
-                    <a th:href="@{/edit_user(id=*{id})}">Edit</a>
-                </td>
-                <td>
-                    <form th:action="@{/delete_user(id=*{id})}" method="post">
-                        <input type="submit" value="Delete" class="btn btn-danger" />
-                    </form>
-                </td>
+                <td th:text="*{roles}">...</td>
             </tr>
         </table>
     </div>
