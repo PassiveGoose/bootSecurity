@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.dao;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaQuery;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 import ru.kata.spring.boot_security.demo.model.User;
 
@@ -38,6 +39,8 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserById(int id) {
-        return entityManager.find(User.class, id);
+        User user = entityManager.find(User.class, id);
+        Hibernate.initialize(user.getRoles());
+        return user;
     }
 }

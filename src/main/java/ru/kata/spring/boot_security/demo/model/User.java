@@ -1,18 +1,18 @@
 package ru.kata.spring.boot_security.demo.model;
 
-
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,28 +25,27 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column
     @Size(min = 2, max = 100)
     private String name;
 
-    @Column
     @Size(min = 2, max = 100)
     private String surname;
 
-    @Column
     @Min(value = 1)
     private int age;
 
-    @Column
     @Size(min = 2, max = 100)
     private String username;
 
-    @Column
     @Size(min = 2, max = 100)
     private String password;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private List<Role> roles = new ArrayList<>();
 
     public User() {
@@ -104,9 +103,16 @@ public class User {
     }
 
     public void addRole(Role role) {
-        roles.add(role);
+        this.roles.add(role);
+        role.getUsers().add(this);
     }
 
+    public void removeRole(Role role) {
+        this.roles.remove(role);
+        role.getUsers().remove(this);
+    }
+
+    @Transactional
     public List<Role> getRoles() {
         return roles;
     }

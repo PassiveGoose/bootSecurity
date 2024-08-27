@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public interface UserService {
     @Transactional
     void removeUserById(int id);
 
+    @Transactional
     List<User> getAllUsers();
 
     @Transactional
