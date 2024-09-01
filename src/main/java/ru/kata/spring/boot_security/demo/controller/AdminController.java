@@ -18,6 +18,7 @@ import ru.kata.spring.boot_security.demo.util.UserValidator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
@@ -45,7 +46,7 @@ public class AdminController {
     @GetMapping("/add_user")
     public String showAddUserPage(ModelMap model) {
         List<Role> roles = new ArrayList<>();
-        roles.add(new Role());
+        roles.add(new Role("USER"));
         roles.add(new Role("ADMIN"));
 
         model.addAttribute("user", new User());
@@ -60,7 +61,9 @@ public class AdminController {
 
     @PostMapping(value = "/add_user", params = "action=create")
     public String addUser(@ModelAttribute("user") @Valid User user,
+                          @RequestParam("roles") List<String> roles,
                           BindingResult bindingResult) {
+        setRolesToUser(user, roles);
         userValidator.validate(user, bindingResult);
         if (!bindingResult.hasErrors()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -96,7 +99,9 @@ public class AdminController {
 
     @PostMapping(value = "/edit_user", params = "action=update")
     public String editUser(@ModelAttribute("user") @Valid User user,
+                           @RequestParam("roles") List<String> roles,
                            BindingResult bindingResult) {
+        setRolesToUser(user, roles);
         userValidator.validate(user, bindingResult);
         if (!bindingResult.hasErrors()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -104,5 +109,15 @@ public class AdminController {
             return "redirect:/admin/users";
         }
         return "redirect:edit_user?error&id=" + user.getId();
+    }
+
+    private void setRolesToUser(User user, List<String> roles) {
+        List<Role> rolesForUser = new ArrayList<>();
+        for (String role : roles) {
+            Optional<Role> roleOpt = userService.getRoleByName(role);
+            Role roleForUser = roleOpt.orElseGet(() -> new Role(role));
+            rolesForUser.add(roleForUser);
+        }
+        user.setRoles(rolesForUser);
     }
 }

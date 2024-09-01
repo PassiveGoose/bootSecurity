@@ -53,7 +53,7 @@
             <tr>
                 <td>Roles:</td>
                 <td><label th:each="role : ${roles}">
-                    <input type="checkbox" name="roles" th:field="${user.roles}" th:value="${role.name}"/>
+                    <input type="checkbox" name="roles" th:value="${role.name}"/>
                     <label th:text="${role.name}" ></label>
                 </label></td>
             </tr>

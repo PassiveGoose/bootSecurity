@@ -54,7 +54,7 @@ public class AuthController {
         if (bindingResult.hasErrors()) {
             return "redirect:register?error";
         }
-        user.addRole(new Role());
+        user.addRole(userService.getRoleByName("USER").orElseGet(() -> new Role("USER")));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.saveUser(user);
         return "redirect:login";

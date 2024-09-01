@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.sequrity.UserDetailsImpl;
 
@@ -25,13 +26,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         this.userDao = userDao;
     }
 
-    @Transactional
     @Override
     public void saveUser(@Valid User user) {
         userDao.saveUser(user);
     }
 
-    @Transactional
     @Override
     public void removeUserById(int id) {
         userDao.removeUserById(id);
@@ -42,7 +41,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userDao.getAllUsers();
     }
 
-    @Transactional
     @Override
     public void updateUser(@Valid User user) {
         userDao.updateUser(user);
@@ -57,6 +55,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public Optional<User> getUserByUsername(String username) {
         List<User> userList = getAllUsers();
         return userList.stream().filter(user -> user.getUsername().equals(username)).findAny();
+    }
+
+    @Override
+    public Optional<Role> getRoleByName(String roleName) {
+        return userDao.getRoleByName(roleName);
     }
 
     @Override

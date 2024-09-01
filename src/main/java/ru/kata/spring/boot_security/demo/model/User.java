@@ -40,7 +40,7 @@ public class User {
     @Size(min = 2, max = 100)
     private String password;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -82,10 +82,6 @@ public class User {
         return age;
     }
 
-    public void setAge(int age) {
-        this.age = age;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -105,11 +101,6 @@ public class User {
     public void addRole(Role role) {
         this.roles.add(role);
         role.getUsers().add(this);
-    }
-
-    public void removeRole(Role role) {
-        this.roles.remove(role);
-        role.getUsers().remove(this);
     }
 
     @Transactional
