@@ -8,13 +8,13 @@ import java.util.Optional;
 
 public interface UserService {
 
-    void saveUser(User user) ;
+    boolean saveUser(User user, List<String> roleNames) ;
 
     void removeUserById(int id);
 
     List<User> getAllUsers();
 
-    void updateUser(User user);
+    boolean updateUser(User user, List<String> roleNames);
 
     User getUserById(int id);
 

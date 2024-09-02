@@ -2,10 +2,8 @@ package ru.kata.spring.boot_security.demo.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,11 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
-import ru.kata.spring.boot_security.demo.util.UserValidator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
@@ -26,15 +22,9 @@ public class AdminController {
 
     private final UserService userService;
 
-    private final UserValidator userValidator;
-
-    private final PasswordEncoder passwordEncoder;
-
     @Autowired
-    public AdminController(UserService userService, UserValidator userValidator, PasswordEncoder passwordEncoder) {
+    public AdminController(UserService userService) {
         this.userService = userService;
-        this.userValidator = userValidator;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/users")
@@ -61,16 +51,11 @@ public class AdminController {
 
     @PostMapping(value = "/add_user", params = "action=create")
     public String addUser(@ModelAttribute("user") @Valid User user,
-                          @RequestParam("roles") List<String> roles,
-                          BindingResult bindingResult) {
-        setRolesToUser(user, roles);
-        userValidator.validate(user, bindingResult);
-        if (!bindingResult.hasErrors()) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userService.saveUser(user);
-            return "redirect:/admin/users";
+                          @RequestParam("roles") List<String> roles) {
+        if (userService.saveUser(user, roles)) {
+            return "redirect:add_user?error";
         }
-        return "redirect:add_user?error";
+        return "redirect:/admin/users";
     }
 
     @PostMapping(value = "/delete_user", params = "id")
@@ -99,25 +84,10 @@ public class AdminController {
 
     @PostMapping(value = "/edit_user", params = "action=update")
     public String editUser(@ModelAttribute("user") @Valid User user,
-                           @RequestParam("roles") List<String> roles,
-                           BindingResult bindingResult) {
-        setRolesToUser(user, roles);
-        userValidator.validate(user, bindingResult);
-        if (!bindingResult.hasErrors()) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userService.updateUser(user);
-            return "redirect:/admin/users";
+                           @RequestParam("roles") List<String> roles) {
+        if (!userService.updateUser(user, roles)) {
+            return "redirect:edit_user?error&id=" + user.getId();
         }
-        return "redirect:edit_user?error&id=" + user.getId();
-    }
-
-    private void setRolesToUser(User user, List<String> roles) {
-        List<Role> rolesForUser = new ArrayList<>();
-        for (String role : roles) {
-            Optional<Role> roleOpt = userService.getRoleByName(role);
-            Role roleForUser = roleOpt.orElseGet(() -> new Role(role));
-            rolesForUser.add(roleForUser);
-        }
-        user.setRoles(rolesForUser);
+        return "redirect:/admin/users";
     }
 }
